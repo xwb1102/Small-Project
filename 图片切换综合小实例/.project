@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>模拟手机短信发送</name>
+	<name>图片切换综合实例</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,25 +16,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1520923602808</id>
-			<name></name>
-			<type>26</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-node_modules</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1520945643985</id>
-			<name></name>
-			<type>26</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-node_modules</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>1520998531563</id>
+			<id>1521007986392</id>
 			<name></name>
 			<type>26</type>
 			<matcher>

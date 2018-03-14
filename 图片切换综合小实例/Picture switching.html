@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="index.css" rel="stylesheet" type="text/css" />
+	</head>
+	<script>
+		window.onload = function(){
+			var cycilc = document.querySelector(".cycilc");
+			var order = document.querySelector(".order");
+			var text_top = document.querySelector(".text_top");
+			var switching_img = document.querySelector(".switching_img");
+			var text_bottom = document.querySelector(".text_bottom");
+			var next = document.querySelector(".next");
+			var prev = document.querySelector(".prev");
+			var prompt = document.querySelector(".prompt");
+			var close = document.querySelector(".close");
+			var sure = document.querySelector(".sure");
+			var explain = document.querySelector(".explain");
+			var footer = document.querySelector(".footer");
+			var trun = document.querySelector(".trun");
+			
+			
+			var num = 0;
+			
+			arrText = ['蒸汽时代的狂想','机械化的清理','风雪中的前进','智能时代的到来'];
+			arrImg = ['img/img01.jpg','img/img02.jpg','img/img03.jpg','img/img04.jpg'];
+			arrp = ['已经到第一张啦~','已经到最后一张啦~'];
+			arrte = ['图片可以从最后一张跳到第一张循环切换','图片可以只能到第一张后者最后一张切换']
+			
+			function abc(){
+				switching_img.src =arrImg[num];
+					text_bottom.innerHTML = arrText[num];
+					text_top.innerHTML = num+1+'/'+arrText.length;
+			}
+			
+			next.onclick = function(){
+					num++;
+					
+					if(num>=arrText.length){
+						num=0;
+						abc();
+					}else{
+						abc();
+					}
+				
+			}
+			prev.onclick = function(){
+					num--;
+					
+					if(num <0){
+						num=arrText.length-1;
+						abc();
+					}else{
+						abc();
+					}
+					
+				}
+			
+			cycilc.onclick = function(){
+				cycilc.classList.add('selected');
+				order.classList.remove('selected');
+				trun.innerHTML = arrte[0];
+				next.onclick = function(){
+					num++;
+					
+					if(num>=arrText.length){
+						num=0;
+						abc();
+					}else{
+						abc();
+					}
+				
+				}
+				prev.onclick = function(){
+					num--;
+					
+					if(num <0){
+						num=arrText.length-1;
+						abc();
+					}else{
+						abc();
+					}
+					
+				}
+			}
+			order.onclick = function(){
+				order.classList.add('selected');
+				cycilc.classList.remove('selected');
+				trun.innerHTML = arrte[1];
+				next.onclick = function(){
+					num++;
+					
+					if(num>=arrText.length){
+						num=arrText.length-1;
+					prompt.style.display = "block";
+					footer.style.display = "block";
+					explain.innerHTML = arrp[1];
+						abc();
+					}else{
+						abc();
+					}
+				
+				}
+				prev.onclick = function(){
+					num--;
+					
+					if(num <0){
+						num=0;
+					prompt.style.display = "block";
+					footer.style.display = "block";
+						abc();
+					}else{
+						abc();
+					}
+					
+				}
+			}
+			sure.onclick = function(){
+				prompt.style.display = "none";
+				footer.style.display = "none";
+			}
+			close.onclick = function(){
+				prompt.style.display = "none";
+				footer.style.display = "none";
+			}
+		}
+	</script>
+	<body>
+		<div class="wraper">
+			<div class="wrap_ridus">
+				<div class="main">
+					<div class="main_top">
+						<span class="cycilc selected"> 循环切换</span>
+						<span class="order">顺序切换</span>
+						<p class="trun">图片可以从最后一张跳到第一张循环切换</p>
+					</div>
+					<div class="main_bottom">
+						<i class="text_top">
+								1/4
+						</i>
+						<img class="switching_img" src="img/img01.jpg" />
+						<p class="text_bottom">蒸汽时代的狂想</p>
+						<span class="next"><a href="javaScript:;"></a></span>
+						<span class="prev"><a href="javaScript:;"></a></span>
+						<div class="prompt">
+							<p class="close"><img src="img/close.png" /> </p>
+							<p class="text_pr">JavaScript提醒</p>
+							<p class="explain">已经到第一张啦~</p>
+							<div class="sure">确定</div>
+						</div>
+						<div class="footer">
+							
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
