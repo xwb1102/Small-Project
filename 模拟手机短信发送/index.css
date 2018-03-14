@@ -1,0 +1,141 @@
+body{
+	background:url(img/bg.jpg) no-repeat;
+	background-size:cover;
+}
+ul{
+	margin:0;
+	padding:0;
+}
+input{
+	border:0;
+}
+li{
+	list-style: none;
+	background-color:#979799;
+	width:auto;
+	height:auto;
+	display: inline-block;
+	border-radius:4px 2px;
+	display: block;
+	clear:both;
+}
+.wrap{
+	margin:200px auto;
+	width:340px;
+	height:650px;
+	background-color:#e5e3ec;
+	border-radius:20px 20px;
+	padding-top:20px;
+}
+.header{
+	height:2px;
+	width:56px;
+	margin:0 auto 18px;
+	border:1px solid #979799;
+	background-color:#979799;
+	border-radius:6px 6px;
+}
+.main{
+	width:306px;
+	height:535px;
+	border:2px solid #a4a3ac;
+	margin: 0 auto;
+	background-color:#fff;
+	position:relative;
+}
+.center{
+	padding:10px 10px;
+	height:452px;
+	overflow:auto ;
+	background:url(img/rbg.jpg) no-repeat;
+}
+.footer{
+	width:306px;
+	height:57px;
+	background-color:#e3e3e3;
+	position:absolute;
+	bottom:0;
+	padding-top:10px;
+}
+.img,.text1,.btn{
+	float:left;
+}
+.img{
+	margin:0 14px;
+}
+.text1{
+	width:180px;
+	height:40px;
+	border-radius:4px 4px;
+	padding-left:10px;
+}
+.btn{
+	margin-top:12px;
+}
+.btn a{
+	margin:0 0 0 12px;
+	text-decoration: none;
+	color:red;
+	font-size:14px;
+}
+.img{
+	display: inline-block;
+}
+.footer_img{
+	margin:20px 150px;
+}
+.center_left{
+	float:left;
+	clear:both;
+	position:relative;
+}
+.center_right{
+	float:right;
+	clear:both;
+	position:relative;
+}
+.img2{
+	float:left;
+	display: block;
+}
+.text2{
+	float:left;
+	background-color:#ccc;
+	margin-top:7px;
+	margin-left:4px;
+	border-radius:4px 4px;
+	display: block;
+	max-width:226px;
+	margin-left:6px;
+	padding:6px;
+	word-break: break-all;
+}
+.img3{
+	float:right;
+	clear:both;
+	display: block;
+}
+.text4{
+	float:right;
+	background-color:#ccc;
+	margin-top:7px;
+	margin-left:4px;
+	border-radius:4px 4px;
+	display: block;
+	max-width:228px;
+	margin-right:6px;
+	padding:6px;
+	word-break: break-all;
+	
+}
+
+.triangle{
+	position:absolute;
+	left:36px;
+	top:16px;
+}
+.triangle1{
+	position:absolute;
+	right:36px;
+	top:13px;
+}
