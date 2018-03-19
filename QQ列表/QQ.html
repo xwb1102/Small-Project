@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		ul,p{
+			margin:0;
+			padding:0;
+		}
+		li{
+			list-style: none;
+		}
+		.wrap{
+			width:400px;
+			height:694px;
+			background:url(bg.png) no-repeat;
+			margin:0 auto;
+			padding-top:6px;
+		}
+		.main{
+			width:374px;
+			height:718px;
+			margin:0 auto;
+			background:url(bg1.png) no-repeat;
+			padding-top:60px;
+		}
+		.main div{
+			margin-bottom:20px;
+		}
+		.content{
+			width:274px;
+			margin: 0 auto;
+			color:#fff;
+			position:relative;
+		}
+		.content ul{
+			display: none;
+		}
+		.content ul li:hover{
+			background-color:#ccc;
+		}
+		.triangle{
+			display: inline-block;
+			width:0;
+			height:0;
+			border-top:8px solid transparent;
+			border-right:8px solid #ccc;
+			border-bottom:8px solid transparent ;
+			position:absolute;
+			top:16px;
+			left:10px;
+		}
+		.triangle1{
+			display: inline-block;
+			width:0;
+			height:0;
+			border-top:8px solid #ccc;
+			border-left:8px solid transparent;
+			border-right:8px solid transparent ;
+			position:absolute;
+			top:18px;
+			left:10px;
+		}
+		.content_name{
+			width:234px;
+			height:46px;
+			line-height:46px;
+			background:rgba(0,0,0,0.7);
+			padding-left:40px;
+		}
+		.content_list{
+			width:274px;
+			height:90px;
+			background:rgba(0,0,0,0.7);
+		}
+		.content_list li{
+			width:234px;
+			height:30px;
+			line-height:30px;
+			padding-left:40px;
+		}
+	</style>
+	<script>
+		window.onload = function(){
+			var content_name = document.querySelectorAll('.content_name');
+			var content_list = document.querySelectorAll('.content_list');
+			var triangle1 = document.querySelectorAll('.triangle1');console.log(triangle1);
+			var len = triangle1.length;
+			var prve = 0;
+			
+			for(var i = 0;i<len;i++){
+				content_name[i].index = i;
+				content_name[i].check = false;
+				content_name[i].onclick = function(){
+					
+					if(this.check){
+						for(var i= 0;i<len;i++){
+							content_list[i].style.display = "none"; 
+							content_name[i].style.backgroundColor = "";
+							triangle1[i].classList.remove('triangle');
+							triangle1[i].classList.add('triangle1');
+						}
+					}else{
+						for(var i = 0;i<len;i++){
+							content_name[i].check = false;
+							content_list[i].style.display = "none"; 
+							content_name[i].style.backgroundColor = "";
+						}
+							triangle1[this.index].classList.remove('triangle1');
+							triangle1[this.index].classList.add('triangle');
+							content_list[this.index].style.display = "block"; 
+							content_name[this.index].style.backgroundColor = "rgba(241,13,95,0.5)";
+					}
+					this.check = !this.check;
+				}
+			}
+		}
+	</script>
+	<body>
+		<div class="wrap">
+			<div class="main">
+				<div class="content">
+					<span class="triangle1"></span>
+					<p class="content_name">周杰伦</p>
+					<ul class="content_list">
+						<li>七里香</li>
+						<li>不能说的秘密</li>
+						<li>稻香</li>
+					</ul>
+				</div>
+				<div class="content">
+					<span class="triangle1"></span>
+					<p class="content_name">薛之谦</p>
+					<ul class="content_list">
+						<li>认真的雪</li>
+						<li>王子公主</li>
+						<li>丑八怪</li>
+					</ul>
+				</div>
+				<div class="content">
+					<span class="triangle1"></span>
+					<p class="content_name">陈奕迅</p>
+					<ul class="content_list">
+						<li>十年</li>
+						<li>浮夸</li>
+						<li>稳稳地幸福</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		.box{
+			width:1000px;
+			height:1000px;
+			position:relative;
+		}
+	    .box div{
+			width:50px;
+			height:50px;
+			line-height: 50px;
+			text-align: center;
+			background-color:rgba(0,0,0,0.8);
+			position:absolute;
+			top:0;
+			left:0;			/*border:1px solid #ccc;*/
+		}
+		.active{
+			background-image:url(img/timg.jpg);
+		}
+	</style>
+	<script>
+		window.onload = function(){
+			var box = document.querySelector('.box');
+			var len = 800;
+			var str = "";
+			for(var i=0;i<len;i++){
+				str+='<div style="top:'+Math.floor(i/40)*52+'px; left:'+(i%40)*52+'px;"></div>';
+			}
+			box.innerHTML = str;
+			var div = document.querySelectorAll('.box div');
+//			console.log(div)div    
+			for(var i=0;i<len;i++){
+				div[i].style.backgroundPosition =-i%40*52+'px '+-Math.floor(i/40)*52+'px';;
+				div[i].onmouseover = function(){
+					this.className = 'active';
+//					this.style.backgroundColor = "rgba(0,0,0,0)";
+				}
+			}
+		}
+		
+	</script>
+	<body>
+		<div class="box"></div>
+	</body>
+</html>
