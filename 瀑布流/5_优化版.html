@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+      html{
+        height: 100%;
+        overflow-x: hidden;
+      }
+    	body{
+    		background:skyblue;
+    	}
+      *{
+        margin: 0;
+        padding: 0;
+      }
+      .pic{
+        width: 236px;
+        box-shadow:0 1px 3px rgba(0,0,0,.3);
+        overflow:hidden;
+        margin-top:10px;
+      }
+      img{
+        width:236px;
+        border: none;
+        display: block;
+      }
+      ul{
+        list-style: none;
+        position: relative;
+        margin: 0 auto;
+        border:1px solid #000;
+        /* width:1050px; */
+        /* overflow: hidden; */
+      }
+      li{
+        position: absolute;
+        /* border: 1px solid #ccc; */
+        /* float: left; */
+        /* margin: 8px; */
+        width:236px;
+        transition: 500ms;
+      }
+      #loading{
+        height: 50px;
+        position: fixed;
+        bottom:0;
+        background: #fff;
+        width:100%;
+        transition: 500ms;
+      }
+      #loading img{
+        width:80px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="ul">
+        
+    </ul>
+    <div id="loading">
+      <img height="50" src="1.gif" >
+    </div>
+<script src="jsonp.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+  /*
+    http://www.wookmark.com/api/json/popular?callback=fn
+
+    <li>
+        <!-- <div class="pic">
+          <img src="http:\/\/www.wookmark.com\/images\/original\/638518_wookmark.jpg">
+        </div>
+        <div class="pic">
+          <img src="http:\/\/www.wookmark.com\/images\/original\/638518_wookmark.jpg">
+        </div>
+        <div class="pic">
+              <img src="http:\/\/www.wookmark.com\/images\/original\/638518_wookmark.jpg">
+            </div> -->
+    </li>
+  */
+  
+  
+  // fetchJsonp(url,{jsonpCallback:'callback'})
+  // .then(res=>res.json())
+  // .then(res=>{
+  //   console.log(res);
+  // });
+
+  /*
+    当前页面能放多少张图
+
+    可视区宽度/一张的宽度  -> 向下取整
+  */
+
+  let iW = document.documentElement.clientWidth; //可视区的宽度
+  let picW = 236; //一张的宽度
+  let marginL = 10; //间距,这里是定义好的一个距离，并不是某个img或者li的margin值
+  let sjW = picW + marginL; //实际宽，原本的宽加上那10个像素，看起来就像是中间有了空隙
+ //这里定义一个数，为了，请求数据的时候使用，URL后面的page后的数字一改，获取到的数据又会不一样，就是获取更多
+  let pageNum = 0;
+  let onOff = true;//定义一个开关，用于页面缩放的时候
+  
+
+// 这里len得到的是，一行上可以有几张图片的放置
+  let len = Math.floor((iW - marginL) / sjW );
+//有了len就可以知道，ul的宽
+  ul.style.width = len * sjW - marginL + 'px';
+
+  /*
+    创建位置
+  */
+ //定义了两个数组，一个用于存放top值，一个用于存放left值
+  let arrT = [];
+  let arrL = [];
+  //定义一个数，用于查看，数据是否加载完
+  let actionNum = 0;
+  //这里是将第一次的宽高存放到数组中
+  for(let i=0;i<len;i++){
+    arrL.push(sjW * i);
+    arrT.push(0);
+  }
+// console.log(arrT,arrL)
+  /*
+    [100,150,120,80]
+  */
+
+  //拿到数据去渲染页面
+  render(pageNum);
+  function render(num=0){
+    loading.style.transition = 'none';
+    loading.style.opacity = 1;
+    //这个网址是获取数据的网址
+    let url = 'http://www.wookmark.com/api/json/popular?page='+num;
+    //这个是获取数据的方法
+    fetchJsonp(url,{jsonpCallback:'callback'})
+    //res.json()，这一步就是获取到具体的数据内容，因为res包括的内容是很多的，我们需要的就是，里面
+    //json()的内容
+    .then(res=>res.json())
+    .then(res=>{
+      //
+        let dataNum = res.length;
+        if(!dataNum){
+          loading.style.transition = '500ms';
+          loading.style.opacity = 0;
+          alert('我也是有底线的!~~~');
+        };
+        res.forEach(e=>{
+          let li = document.createElement('li');
+          let div = document.createElement('div');
+          div.className = 'pic';
+          let img = new Image;
+          img.src = e.preview;
+          img.style.width = '236px';
+          let p = new Promise(function(resolve,reject){
+              img.onload = function(){
+                //图片加载成功就让下面的数值++
+                actionNum ++;
+                let index = minIndex(arrT);
+                // console.log(arrT)
+                //计算比例，数据中已有e.width这个数据，所需要计算出的是，按照比例来说，在我们页面
+                //上显示的时候，实际的高度是多少，现已知宽度且都是固定的，还有数据中的宽高，那么通
+                //过下列算法，就可以计算出了
+                let picH = e.height * (picW/e.width);
+                //这里是将每次数组里最小的那个值赋予给最新生成的元素li
+                li.style.cssText = `left:${arrL[index]}px;top:${arrT[index]}px;`;
+                // li.style.top = arrL[index] + 'px';
+                div.appendChild(img);
+                li.appendChild(div);
+                //这里的话就是改变arrT数组里的内容了，关键点就在这，首先，arrL这个数组，已经固定
+                //因为从左向右，只有那几个值，重点在于top值的使用
+                //下面这个步骤，就是为了这个使用的，首先，每一次找到数组中的最小值，将它赋予给最新生成
+                //的元素，然后通过下面的步骤，将数组改变，这样下次找到的最小值就不一样了。
+                //通过这样每次找到最小值并更新数组，就可以实现，下面的图片按照一行中哪个最小放在
+                //哪的效果
+                arrT[index] += (picH + marginL);
+                ul.appendChild(li);
+                //如果++到，整条数据的长度的时候，就意味着，加载完事了。
+                if(actionNum == dataNum){
+                  resolve();
+                }
+              }
+              img.onerror = function(){
+                actionNum ++;
+                //如果++到，整条数据的长度的时候，就意味着，加载完事了。失败也++，只不过不创建元素
+                //也就是说，失败了，就没有图片出来了。
+                if(actionNum == dataNum){
+                  resolve();
+                }
+              }
+          });
+          //加载完成
+          p.then(e=>{
+            loading.style.transition = '500ms';
+            loading.style.opacity = 0;
+            onOff = true;
+            actionNum = 0;
+            // console.log(arrT);
+            // console.info(arrL);
+          });
+        });
+    });
+  }
+
+  window.onscroll = function(){
+    // console.log(arrT);
+    //鼠标滚动的时候，获取一下，页面底部的距离，也就是，滚动条的距离加上一个页面的距离
+    let bottom = window.pageYOffset + window.innerHeight;
+    //上面的距离获取到了，是为了判断，下面，什么时候，会滚动到，最矮的那张图片，也就是最先看到头的那张
+    //这样就说明，需要继续加载图片了，因为之前的图片已经加载完了，但是滚动的时候，会一直触发下面的条件
+    //所以需要开关，让加载的内容只执行一次
+    if(bottom >= arrT[minIndex(arrT)]){
+      console.log('加载')
+      if(onOff){
+        onOff = false;
+        console.log('调用')
+        render(++pageNum);
+      }
+    }
+  }
+
+  /*
+    窗口缩放变形
+      1.计算宽度
+      2.重新设置数组
+
+  */
+ //页面缩放，也是类似的
+  window.onresize = function(){
+    //因为缩放了，所以重新获取一下页面的可视宽
+    iW = document.documentElement.clientWidth;
+    //重新计算每一行可以放几张图片
+    len = Math.floor((iW - marginL) / sjW );
+    //这里做了限制，
+    if(len < 3){
+      len = 3;
+    }else if(len > 8){
+      len = 8;
+    }
+    //重新设置ul的宽
+    ul.style.width = len * sjW - marginL + 'px';
+    //将数组清空
+    // arrT.length = arrL.length = 0;
+
+    for(let i=0;i<len;i++){
+      arrL.push(sjW * i);
+      arrT.push(0);
+    }
+    let lis = Array.from(document.getElementsByTagName('li'));
+//这里是将所有的li进行循环，现在是因为页面缩放，所以，首先，第一行的位置不会大遍，当有放大时，有图片
+//往下挤了，这时第二行的最小图片可能会发生变化，因为第一行挤下来了一张图片，那第二行也会往
+//下挤，以此类推，下面的图片也会发生变化，最小的那个图片就会变得不一样
+    lis.forEach(e=>{
+      let index = minIndex(arrT);
+      e.style.left = arrL[index] + 'px';
+      e.style.top = arrT[index] + 'px';
+      //这里，将最小位置的那张加上了自己（img)的高也就是形成了，新的数组，新的最小值，不去渲染
+      //是为了，可以实现动的效果，每一次都是如此，所以每次都需要将原来的arrT给清空，用以存放当次的
+      //的各个li 的高度，
+      arrT[index] += e.offsetHeight;
+    });
+  }
+
+//这个函数是找出，数组中最小的那个值的索引
+  function minIndex(arr){
+      return arr.findIndex(e=>e == Math.min(...arr));
+  }
+
+  
+
+
+
+
+
+  // console.log(arrL,arrT);
+
+
+
+
+
+  
+	
+</script>
+</body>
+</html>
