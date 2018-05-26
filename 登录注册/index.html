@@ -1,0 +1,229 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="/public/css/weibo.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div class="nArea">
+    <!--留言-->
+    <div class="takeComment">
+        <textarea name="textarea" class="takeTextField" id="text"></textarea>
+        <div class="takeSbmComment">
+            <input type="button" id="submit" class="inputs" value=""/>
+            <span>(可按 Enter 回复)</span>
+        </div>
+    </div>
+    <!--已留-->
+    <div class="commentOn">
+        <div class="messList" id="div1" style="height:502px">
+            <!--<div class="reply">
+                <p class="replyContent">卫士，新款卫士将推出总共14种车身式样。其中， XS旅行款车型售价为32295英镑(约33.6万元)。</p>
+                <p class="operation">
+                    <span class="replyTime">2018-09-08 16:37:60</span>
+                    <span class="handle">
+                        <a href="javascript:;" class="top">0</a>
+                        <a href="javascript:;" class="down_icon">0</a>
+                        <a href="javascript:;" class="cut">删除</a>
+                    </span>
+                </p>
+            </div>-->
+        </div>
+        <div class="page" id="page">
+            <!-- <a href="#" class="active">1</a>
+            <a href="#" >2</a> -->
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    let submit = document.getElementById('submit');
+    let text = document.getElementById('text');
+    let div1 = document.getElementById('div1');
+    let page = document.getElementById('page');
+    let num = 1;
+    //这里的点击事件需要换个角度，因为，如果页面重新渲染了，在渲染外面的任何事件都会失效。会被覆盖
+    //所以这里讨了个巧，操作渲染之外的元素，也就是他们的父级，通过ev来操作
+    div1.onclick = function(ev){
+        //这里是删除
+            if(ev.target.className === 'cut'){
+                //先找到对应的id也就是删除按钮的父级的父级的父级，先前有定义
+                let nid = ev.target.parentNode.parentNode.parentNode.getAttribute('daste');
+                del(nid).then(arr=>{
+                    // console.log(num)
+                    //这里删完了之后，重新渲染
+                    if(num>0){
+                        getWb(num).then(arr=>{
+                        div1.innerHTML = '';
+                        arr.forEach(e=> {
+                            div1.appendChild(render(e.content,e.time,e.id,e.like,e.dislike));
+                        });
+                        Page();
+                    })
+                    }
+                })
+            }
+            // 这里是点赞
+            if(ev.target.className === 'top'){
+                let nid = ev.target.parentNode.parentNode.parentNode.getAttribute('daste');
+                up(nid).then(arr=>{
+                     if(num>0){
+                        getWb(num).then(el=>{
+                        div1.innerHTML = '';
+                         console.log(el);
+                        el.forEach(e=> {
+                         console.log(e);
+                            div1.appendChild(render(e.content,e.time,e.id,e.like,e.dislike));
+                        });
+                        Page();
+                    })
+                    }
+                })
+            }
+            //这里是踩
+            if(ev.target.className === 'down_icon'){
+                let nid = ev.target.parentNode.parentNode.parentNode.getAttribute('daste');
+                down(nid).then(arr=>{
+                     if(num>0){
+                        getWb(num).then(el=>{
+                        div1.innerHTML = '';
+                        el.forEach(e=> {
+                            div1.appendChild(render(e.content,e.time,e.id,e.like,e.dislike));
+                        });
+                        Page();
+                    })
+                    }
+                })
+            }
+    }
+    //这里是第一页的内容
+    getWb(1).then(arr=>{
+            // console.log(arr)
+        arr.forEach(e=> {
+            div1.appendChild(render(e.content,e.time,e.id,e.like,e.dislike));
+        });
+    });
+
+    //获取数据，刷新能看到数据库中的
+    async function getWb(num=1){
+        let res = await fetch('/api/weibo?act=get&page='+num);
+        return await res.json();
+    }
+
+
+    submit.addEventListener('click',function(){
+        let val = text.value;
+        /*
+            未来会变
+        */
+        setWb(val).then((res)=>{
+            // console.log(res);
+            if(res.code === 0){
+                div1.insertBefore(render(val,res.time,res.id,res.like,res.dislike),div1.children[0]);
+                text.value = '';
+            }
+        });
+        Page();
+    }); 
+
+    async function setWb(val){
+        let res = await fetch('/api/weibo?act=add&content='+val);
+        // console.log(res)
+        return await res.json();
+    }  
+//渲染函数有五个参数
+    function render(val,time,id,like,dislike){
+        let div = document.createElement('div');
+        div.className = 'reply';
+        let date = new Date(time); //传入一个服务器的时间
+        let iYear =  date.getFullYear();
+        let iMoun =  date.getMonth() + 1;
+        let iH = date.getHours();
+        let iM = date.getMinutes();
+        let iDate = date.getDate();
+        let iS = date.getSeconds();
+        let str = iYear + '-' +tDou(iMoun) + '-' + tDou(iDate);
+        str += ' '+ tDou(iH) + ':' + tDou(iM) + ':'+ tDou(iS);
+
+        div.innerHTML = `
+            <p class="replyContent">${val}</p>
+            <p class="operation">
+                <span class="replyTime">${str}</span>
+                <span class="handle" oid='${id}'>
+                    <a href="javascript:;" class="top">${like}</a>
+                    <a href="javascript:;" class="down_icon">${dislike}</a>
+                    <a href="javascript:;" class="cut">删除</a>
+                </span>
+            </p>`;
+            //这里是将数据中的id放到div上；
+        div.setAttribute('daste',id);
+        return div;
+    }
+//添零
+    function tDou(n){
+        return n<10?'0'+n:''+n;
+    }
+
+    //页码
+    Page();
+    function Page() {
+        async function addpage(){
+        let res = await fetch('/api/weibo?act=get_page_count');
+        
+        return await res.json();
+    }
+    addpage().then(e=>{
+        //先获取总的页数
+        let pageNum = e.count;
+        let html ='';
+        for(let i=1;i<=pageNum;i++){
+                html+=`
+                <a href="javascript:;" >${i}</a>;
+                `
+        };
+        page.innerHTML = html;
+        let as = page.getElementsByTagName('a');
+        //  page.children[0].className = 'active';
+        for(let i = 0;i<as.length;i++){
+            as[i].onclick = function(){
+                // console.log(i+1);
+                //这里的num是给上面删除或者点赞踩用的，因为，在哪里删完，我就在哪里重新渲染，所以我需要
+                //知道当前页
+                num =i+1;
+                div1.innerHTML = '';
+                for(let i=0;i<as.length;i++){          
+                     as[i].className = '';
+                }
+                //这里点击完重新渲染一下
+                getWb(i+1).then(e=>{
+                    // console.log(e);
+                    e.forEach(el=>{
+                        div1.appendChild(render(el.content,el.time,el.id,el.like,el.dislike),div1.children[0]);
+                    })
+                   
+                    // div1.innerHTML = render(e.content,e.time);
+                    page.children[i].className = 'active';
+                })
+            }
+        };
+    });
+    }
+    //删除
+ async function del(id){
+ let res = await fetch('/api/weibo?act=del&id='+id);
+
+        return await res.json();
+    }
+    //点赞
+  async function up(id){
+      let res = await fetch('/api/weibo?act=like&id='+id);
+      return await res.json();
+  }
+  //踩
+  async function down(id){
+      let res = await fetch('/api/weibo?act=dislike&id='+id);
+      return await res.json();
+  }
+</script>
+</html>
